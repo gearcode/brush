@@ -1,10 +1,10 @@
 
-     Controlled            Server               Controller
-
-    +----------+     +------------------+     +------------+
-    + Computer +<--->+ Server   Web     +<--->+ IPhone     +
-    +----------+  /->+ Socket   Console +     + WebBrowser +
-                  |  +------------------+     +------------+
-    +----------+  |
-    + Computer +<-/
+       Client                 Server                  Console
+      (-Slave)             (Http/Socket)             (-Viewer)
+    +----------+       +------------------+       +------------+
+    + Computer +<----->+ Server   Web     +<----->+ WeixinApp  +
+    +----------+   /-->+ Socket   Socket  +       + WebBrowser +
+                   |   +------------------+       +------------+
+    +----------+   |
+    + Computer +<--/
     +----------+

@@ -1,20 +1,20 @@
-package com.gearcode.brush.server.codec;
+package com.gearcode.brush.server.client.codec;
 
-import com.gearcode.brush.server.BrushClient;
-import io.netty.buffer.ByteBuf;
+import com.gearcode.brush.server.client.BrushServer;
+import com.gearcode.brush.server.client.bean.BrushClient;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.CharsetUtil;
 import io.netty.util.NetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -26,15 +26,15 @@ import java.util.concurrent.ConcurrentMap;
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
     private static final Logger logger = LoggerFactory.getLogger(ServerChannelInitializer.class);
 
-    ConcurrentMap<String, BrushClient> clientMap;
+    BrushServer server;
 
     /**
      * 数据帧最大8M
      */
     final static int PAYLOAD = 8 * 1024 * 1024;
 
-    public ServerChannelInitializer(ConcurrentMap clientMap) {
-        this.clientMap = clientMap;
+    public ServerChannelInitializer(BrushServer server) {
+        this.server = server;
     }
 
     @Override
@@ -43,27 +43,26 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
 
         // 初始化ServerSocket的Pipeline
         ch.pipeline()
-        .addLast(new MessageToByteEncoder<ByteBuf>() {
-            @Override
-            protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
-                logger.info("Sending message: {}", msg.readableBytes());
-                out.capacity(out.readableBytes() + 6);
-                out.writeBytes(new byte[]{0, 0});
-                out.writeInt(msg.readableBytes());
-                out.writeBytes(msg);
-            }
-        })
+        // Idle 60s trigger IdleStateEvent
+        .addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS))
+        // Encoder
+        .addLast(new LengthFieldBasedFrameEncoder())
         .addLast(new StringEncoder(CharsetUtil.UTF_8))
+        // Decoder
         .addLast(new LengthFieldBasedFrameDecoder(PAYLOAD, 2, 4, 0, 6))
-        .addLast(new ServerLogicHandler(clientMap));
+        // Logic
+        .addLast(new ServerLogicHandler(server));
 
         // 加入客户端列表
         BrushClient client = new BrushClient();
         client.setIp(NetUtil.toAddressString(ch.remoteAddress().getAddress()));
         client.setId(ch.id().asShortText());
         client.setName(client.getIp() + "(" + client.getId() + ")");
+        client.setStandby(false);
         client.setSocketChannel(ch);
-        clientMap.put(ch.id().asShortText(), client);
+
+        // 加入到客户端列表中
+        server.getClientMap().put(ch.id().asShortText(), client);
 
     }
 }

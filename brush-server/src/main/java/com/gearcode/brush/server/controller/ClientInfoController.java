@@ -1,6 +1,6 @@
 package com.gearcode.brush.server.controller;
 
-import com.gearcode.brush.server.BrushClient;
+import com.gearcode.brush.server.client.bean.BrushClient;
 import com.gearcode.brush.server.boot.NettyBrushServerSpringHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author jason

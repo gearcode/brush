@@ -1,8 +1,7 @@
-package com.gearcode.brush.server.impl;
+package com.gearcode.brush.server.client;
 
-import com.gearcode.brush.server.BrushClient;
-import com.gearcode.brush.server.BrushServer;
-import com.gearcode.brush.server.codec.ServerChannelInitializer;
+import com.gearcode.brush.server.client.bean.BrushClient;
+import com.gearcode.brush.server.client.codec.ServerChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -50,7 +49,7 @@ public class NettyBrushServer implements BrushServer {
                 .channel(NioServerSocketChannel.class)
                 .localAddress(Port)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ConnectionTimeoutMillis)
-                .childHandler(new ServerChannelInitializer(clientMap));
+                .childHandler(new ServerChannelInitializer(this));
 
         try {
             // 阻塞直到绑定操作完成
@@ -82,7 +81,11 @@ public class NettyBrushServer implements BrushServer {
 
     @Override
     public BrushClient findClient(String shortId) {
-        clientMap.get(shortId);
         return clientMap.get(shortId);
+    }
+
+    @Override
+    public ConcurrentMap<String, BrushClient> getClientMap() {
+        return clientMap;
     }
 }

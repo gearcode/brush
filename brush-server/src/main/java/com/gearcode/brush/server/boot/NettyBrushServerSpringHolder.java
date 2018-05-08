@@ -1,11 +1,11 @@
 package com.gearcode.brush.server.boot;
 
-import com.gearcode.brush.server.BrushServer;
-import com.gearcode.brush.server.impl.NettyBrushServer;
+import com.gearcode.brush.server.client.BrushServer;
+import com.gearcode.brush.server.client.NettyBrushServer;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Created by liteng3 on 2018/4/13.
+ * Created by jason on 2018/4/13.
  */
 public class NettyBrushServerSpringHolder implements InitializingBean {
 

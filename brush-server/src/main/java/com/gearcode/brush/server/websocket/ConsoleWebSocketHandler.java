@@ -1,10 +1,8 @@
 package com.gearcode.brush.server.websocket;
 
-import com.gearcode.brush.server.BrushClient;
-import com.gearcode.brush.server.BrushConsole;
-import com.gearcode.brush.server.BrushServer;
-import com.gearcode.brush.server.Constants;
-import io.netty.buffer.Unpooled;
+import com.gearcode.brush.server.client.bean.BrushClient;
+import com.gearcode.brush.server.client.BrushServer;
+import com.gearcode.brush.server.util.Constants;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.util.CharsetUtil;
 import io.netty.util.NetUtil;
@@ -21,7 +19,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by liteng3 on 2018/4/16.
+ * Created by jason on 2018/4/16.
  */
 public class ConsoleWebSocketHandler extends AbstractWebSocketHandler {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleWebSocketHandler.class);
@@ -79,8 +77,8 @@ public class ConsoleWebSocketHandler extends AbstractWebSocketHandler {
             }
 
             SocketChannel clientChannel = brushClient.getSocketChannel();
-            //TODO ByteBufAllocator impl
-            clientChannel.writeAndFlush(Unpooled.wrappedBuffer(message.asBytes())).sync();
+            //TODO ByteBufAllocator
+            clientChannel.writeAndFlush(text).sync();
             logger.info("Send message from console[{}] to client[{}], message: {}",
                     NetUtil.toAddressString(session.getRemoteAddress().getAddress()),
                     NetUtil.toAddressString(clientChannel.remoteAddress().getAddress()),

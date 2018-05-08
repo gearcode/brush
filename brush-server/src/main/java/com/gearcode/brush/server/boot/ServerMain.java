@@ -1,7 +1,7 @@
 package com.gearcode.brush.server.boot;
 
-import com.gearcode.brush.server.BrushServer;
-import com.gearcode.brush.server.impl.NettyBrushServer;
+import com.gearcode.brush.server.client.BrushServer;
+import com.gearcode.brush.server.client.NettyBrushServer;
 
 import java.io.IOException;
 

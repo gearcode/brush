@@ -1,19 +1,47 @@
-package com.gearcode.brush.server;
+package com.gearcode.brush.server.client.bean;
 
+import com.gearcode.brush.server.websocket.BrushConsole;
 import io.netty.channel.socket.SocketChannel;
 
 /**
- * Created by liteng3 on 2018/4/13.
+ *
+ * @author jason
+ * @date 2018/4/13
  */
 public class BrushClient {
 
+    /**
+     * 客户端ID, 使用SocketChannel的ID, 例如: channel.id().asShortText()
+     */
     private String id;
     private String ip;
     private String name;
-    private String pass = "";
 
+    /**
+     * 客户端是否已就绪
+     */
+    private Boolean standby = false;
+
+    private ClientConfig clientConfig;
+
+    /**
+     * 客户端的socketChannel
+     */
     private transient SocketChannel socketChannel;
+    /**
+     * 对应的console端
+     */
     private volatile BrushConsole console;
+
+    public Boolean isStandby() {
+        return standby;
+    }
+
+    public BrushClient setStandby(Boolean standby) {
+        this.standby = standby;
+        return this;
+    }
+
 
     public BrushConsole getConsole() {
         return console;
@@ -21,15 +49,6 @@ public class BrushClient {
 
     public BrushClient setConsole(BrushConsole console) {
         this.console = console;
-        return this;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public BrushClient setPass(String pass) {
-        this.pass = pass;
         return this;
     }
 
@@ -66,6 +85,15 @@ public class BrushClient {
 
     public BrushClient setIp(String ip) {
         this.ip = ip;
+        return this;
+    }
+
+    public ClientConfig getClientConfig() {
+        return clientConfig;
+    }
+
+    public BrushClient setClientConfig(ClientConfig clientConfig) {
+        this.clientConfig = clientConfig;
         return this;
     }
 }

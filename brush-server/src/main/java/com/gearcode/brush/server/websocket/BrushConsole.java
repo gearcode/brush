@@ -1,10 +1,10 @@
-package com.gearcode.brush.server;
+package com.gearcode.brush.server.websocket;
 
 import io.netty.util.NetUtil;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
- * Created by liteng3 on 2018/4/20.
+ * Created by jason on 2018/4/20.
  */
 public class BrushConsole {
 

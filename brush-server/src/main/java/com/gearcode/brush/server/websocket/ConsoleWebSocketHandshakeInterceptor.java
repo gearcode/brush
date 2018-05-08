@@ -1,8 +1,8 @@
 package com.gearcode.brush.server.websocket;
 
-import com.gearcode.brush.server.BrushClient;
-import com.gearcode.brush.server.BrushServer;
-import com.gearcode.brush.server.Constants;
+import com.gearcode.brush.server.client.bean.BrushClient;
+import com.gearcode.brush.server.client.BrushServer;
+import com.gearcode.brush.server.util.Constants;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by liteng3 on 2018/4/17.
+ * Created by jason on 2018/4/17.
  */
 public class ConsoleWebSocketHandshakeInterceptor implements HandshakeInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(ConsoleWebSocketHandshakeInterceptor.class);
@@ -51,24 +51,35 @@ public class ConsoleWebSocketHandshakeInterceptor implements HandshakeIntercepto
             return false;
         }
 
-        // 获取对应的Client
-        BrushClient brushClient = brushServer.findClient(client);
-        if(brushClient == null) {
-            response.setStatusCode(HttpStatus.NOT_FOUND);
-            return false;
+        try {
+
+            // 获取对应的Client
+            BrushClient brushClient = brushServer.findClient(client);
+            if(brushClient == null) {
+                response.setStatusCode(HttpStatus.NOT_FOUND);
+                return false;
+            }
+
+            // 检查客户端状态
+            if(!brushClient.isStandby()) {
+                response.setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
+                return false;
+            }
+
+            // 校验密码
+            if(!token.equals(brushClient.getClientConfig().getPassword())) {
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return false;
+            }
+
+            attributes.put(Constants.WS_HS_KEY_CLIENT, client);
+            attributes.put(Constants.WS_HS_KEY_TOKEN, token);
+            attributes.put(Constants.WS_HS_KEY_WIDTH, width);
+            attributes.put(Constants.WS_HS_KEY_HEIGHT, height);
+
+        } catch (Exception e) {
+            logger.error(e.getLocalizedMessage(), e);
         }
-
-        // 校验密码
-        if(!brushClient.getPass().equals(token)) {
-            response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            return false;
-        }
-
-        attributes.put(Constants.WS_HS_KEY_CLIENT, client);
-        attributes.put(Constants.WS_HS_KEY_TOKEN, token);
-        attributes.put(Constants.WS_HS_KEY_WIDTH, width);
-        attributes.put(Constants.WS_HS_KEY_HEIGHT, height);
-
         return true;
     }
 
