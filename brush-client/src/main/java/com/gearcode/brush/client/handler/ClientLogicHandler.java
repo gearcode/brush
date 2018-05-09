@@ -163,12 +163,27 @@ public class ClientLogicHandler extends SimpleChannelInboundHandler<String> {
             return;
         }
 
+        // Config
+        if(evt instanceof ClientConfig) {
+            ClientConfig config = (ClientConfig) evt;
+            sendConfigToServer(ctx, config);
+        }
+
         super.userEventTriggered(ctx, evt);
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ClientConfig config = ClientConfigUtil.getClientConfig();
+        sendConfigToServer(ctx, config);
+    }
+
+    /**
+     * 发送配置信息到Server端
+     * @param ctx
+     * @param config
+     */
+    private void sendConfigToServer(ChannelHandlerContext ctx, ClientConfig config) {
         String configJSON = JSON.toJSONString(config);
 
         ByteBuf buffer = ctx.alloc().buffer(1 + configJSON.length());

@@ -8,7 +8,7 @@ package com.gearcode.brush.client.util;
 public class ClientConfigUtil {
     public static ClientConfig getClientConfig() {
         ClientConfig config = new ClientConfig();
-        config.setPassword("");
+        config.setPassword(PrefConfig.retrieve(Constants.PREF_KEY_PASSWORD));
         return config;
     }
 }

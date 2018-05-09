@@ -5,6 +5,8 @@ package com.gearcode.brush.client.util;
  */
 public class Constants {
 
+    public static final String PREF_KEY_PASSWORD = "password";
+
     public enum ClientMessageType {
         CONFIG(1), HEATBEAT(2), SCREEN(3);
 

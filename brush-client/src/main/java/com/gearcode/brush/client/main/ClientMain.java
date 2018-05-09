@@ -1,7 +1,12 @@
 package com.gearcode.brush.client.main;
 
+import com.alibaba.fastjson.JSON;
 import com.gearcode.brush.client.handler.ClientChannelInitializer;
+import com.gearcode.brush.client.util.ClientConfigUtil;
+import com.gearcode.brush.client.util.Constants;
+import com.gearcode.brush.client.util.PrefConfig;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -10,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,81 +37,18 @@ public class ClientMain {
 
     static final long RECONNECT_DELAY = 3000L;
 
+    static Channel channel;
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
-        final TrayIcon trayIcon;
+        // 初始化托盘图标
+        initTray();
 
-        if (SystemTray.isSupported()) {
-
-            SystemTray tray = SystemTray.getSystemTray();
-
-            URL icon = ClientMain.class.getClassLoader().getResource("images/gear.gif");
-            Image image = ImageIO.read(icon);
-            System.out.println(image);
-//
-//            MouseListener mouseListener = new MouseListener() {
-//                @Override
-//                public void mouseClicked(MouseEvent e) {
-//                    System.out.println("Tray Icon - Mouse clicked!");
-//                }
-//                @Override
-//                public void mouseEntered(MouseEvent e) {
-//                    System.out.println("Tray Icon - Mouse entered!");
-//                }
-//                @Override
-//                public void mouseExited(MouseEvent e) {
-//                    System.out.println("Tray Icon - Mouse exited!");
-//                }
-//                @Override
-//                public void mousePressed(MouseEvent e) {
-//                    System.out.println("Tray Icon - Mouse pressed!");
-//                }
-//                @Override
-//                public void mouseReleased(MouseEvent e) {
-//                    System.out.println("Tray Icon - Mouse released!");
-//                }
-//            };
-
-            ActionListener exitListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("Exiting...");
-                    System.exit(0);
-                }
-            };
-
-            PopupMenu popup = new PopupMenu();
-            MenuItem defaultItem = new MenuItem("Exit");
-            defaultItem.addActionListener(exitListener);
-            popup.add(defaultItem);
-
-            trayIcon = new TrayIcon(image, "Tray Demo", popup);
-            ActionListener actionListener = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    trayIcon.displayMessage("Action Event",
-                            "An Action Event Has Been Performed!",
-                            TrayIcon.MessageType.INFO);
-                }
-            };
-
-            trayIcon.setImageAutoSize(true);
-            trayIcon.addActionListener(actionListener);
-//            trayIcon.addMouseListener(mouseListener);
-
-            try {
-                tray.add(trayIcon);
-            } catch (AWTException e) {
-                System.err.println("TrayIcon could not be added.");
-            }
-
-        } else {
-
-            //  System Tray is not supported
-
+        // 设置密码
+        String password = PrefConfig.retrieve(Constants.PREF_KEY_PASSWORD);
+        if(password == null) {
+            showPasswordDialog();
         }
-
 
         while(true) {
             logger.info("Start connect to server...");
@@ -135,7 +78,8 @@ public class ClientMain {
             });
 
             // 阻塞至channel关闭
-            f.channel().closeFuture().sync();
+            channel = f.channel();
+            channel.closeFuture().sync();
 
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
@@ -143,4 +87,128 @@ public class ClientMain {
             group.shutdownGracefully();
         }
     }
+
+    private static void initTray() throws IOException {
+
+        if (SystemTray.isSupported()) {
+            final TrayIcon trayIcon;
+            SystemTray tray = SystemTray.getSystemTray();
+            URL icon = ClientMain.class.getClassLoader().getResource("images/gear.gif");
+            Image image = ImageIO.read(icon);
+
+//
+//            MouseListener mouseListener = new MouseListener() {
+//                @Override
+//                public void mouseClicked(MouseEvent e) {
+//                    System.out.println("Tray Icon - Mouse clicked!");
+//                }
+//                @Override
+//                public void mouseEntered(MouseEvent e) {
+//                    System.out.println("Tray Icon - Mouse entered!");
+//                }
+//                @Override
+//                public void mouseExited(MouseEvent e) {
+//                    System.out.println("Tray Icon - Mouse exited!");
+//                }
+//                @Override
+//                public void mousePressed(MouseEvent e) {
+//                    System.out.println("Tray Icon - Mouse pressed!");
+//                }
+//                @Override
+//                public void mouseReleased(MouseEvent e) {
+//                    System.out.println("Tray Icon - Mouse released!");
+//                }
+//            };
+
+
+            MenuItem setPassMenuItem = new MenuItem("Set password");
+            setPassMenuItem.addActionListener(e -> {
+                logger.info("Set password action");
+                showPasswordDialog();
+            });
+
+            MenuItem exitMenuItem = new MenuItem("Exit");
+            ActionListener exitListener = e -> {
+                logger.info("Tray exiting...");
+                System.exit(0);
+            };
+            exitMenuItem.addActionListener(exitListener);
+
+            PopupMenu popup = new PopupMenu();
+            popup.add(setPassMenuItem);
+            popup.add(exitMenuItem);
+
+            trayIcon = new TrayIcon(image, "BrushClient", popup);
+            ActionListener actionListener = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    trayIcon.displayMessage("BrushClient",
+                            "WeChat: crazyjason",
+                            TrayIcon.MessageType.INFO);
+                }
+            };
+
+            trayIcon.setImageAutoSize(true);
+            trayIcon.addActionListener(actionListener);
+//            trayIcon.addMouseListener(mouseListener);
+
+            try {
+                tray.add(trayIcon);
+            } catch (AWTException e) {
+                logger.error("TrayIcon could not be added.");
+            }
+
+            /*
+            显示Message
+             */
+            trayIcon.displayMessage("BrushClient",
+                    "WeChat: crazyjason",
+                    TrayIcon.MessageType.INFO);
+
+        } else {
+            //  System Tray is not supported
+        }
+
+    }
+
+    private static void showPasswordDialog() {
+        JFrame frame = new JFrame("Set password");
+        frame.setLayout(new FlowLayout());
+
+        Container container = frame.getContentPane();
+
+        container.add(new JLabel("Password:"));
+
+        JPasswordField passwordField = new JPasswordField(16);
+        passwordField.addActionListener(e -> {
+            confirmPassword(passwordField, frame);
+        });
+        container.add(passwordField);
+
+        ActionListener confirmPassword = e -> {
+            confirmPassword(passwordField, frame);
+        };
+
+        JButton confirm = new JButton("Confirm");
+        confirm.addActionListener(confirmPassword);
+        container.add(confirm);
+
+        frame.setVisible(true);
+        frame.pack();
+
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    }
+
+    private static void confirmPassword(JPasswordField passwordField, JFrame frame) {
+        char[] passwordCharArr = passwordField.getPassword();
+        String password = new String(passwordCharArr);
+        logger.info("Confirm password: {}", password);
+
+        PrefConfig.save(Constants.PREF_KEY_PASSWORD, password);
+        frame.dispose();
+
+        channel.pipeline().fireUserEventTriggered(ClientConfigUtil.getClientConfig());
+    }
+
 }
