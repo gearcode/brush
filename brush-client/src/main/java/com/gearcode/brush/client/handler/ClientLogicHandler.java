@@ -174,7 +174,7 @@ public class ClientLogicHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ClientConfig config = ClientConfigUtil.getClientConfig();
+        ClientConfig config = ClientConfigUtil.getCurrentClientConfig();
         sendConfigToServer(ctx, config);
     }
 

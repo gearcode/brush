@@ -1,5 +1,7 @@
 package com.gearcode.brush.server.client.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -8,7 +10,8 @@ import java.io.Serializable;
  * @date 2018/5/8
  */
 public class ClientConfig implements Serializable {
-    private String password;
+    @JsonIgnore
+    private transient String password;
     private Integer width;
     private Integer height;
 

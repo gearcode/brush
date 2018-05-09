@@ -1,6 +1,5 @@
 package com.gearcode.brush.client.main;
 
-import com.alibaba.fastjson.JSON;
 import com.gearcode.brush.client.handler.ClientChannelInitializer;
 import com.gearcode.brush.client.util.ClientConfigUtil;
 import com.gearcode.brush.client.util.Constants;
@@ -19,9 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -208,7 +204,7 @@ public class ClientMain {
         PrefConfig.save(Constants.PREF_KEY_PASSWORD, password);
         frame.dispose();
 
-        channel.pipeline().fireUserEventTriggered(ClientConfigUtil.getClientConfig());
+        channel.pipeline().fireUserEventTriggered(ClientConfigUtil.getCurrentClientConfig());
     }
 
 }

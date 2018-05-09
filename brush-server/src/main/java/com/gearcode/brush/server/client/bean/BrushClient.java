@@ -1,5 +1,6 @@
 package com.gearcode.brush.server.client.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gearcode.brush.server.websocket.BrushConsole;
 import io.netty.channel.socket.SocketChannel;
 
@@ -27,10 +28,13 @@ public class BrushClient {
     /**
      * 客户端的socketChannel
      */
+    @JsonIgnore
     private transient SocketChannel socketChannel;
+
     /**
      * 对应的console端
      */
+    @JsonIgnore
     private volatile BrushConsole console;
 
     public Boolean isStandby() {

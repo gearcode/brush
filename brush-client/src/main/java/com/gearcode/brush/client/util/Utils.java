@@ -25,7 +25,11 @@ public class Utils {
 
     public static void keyPress(int code) throws AWTException {
         Robot robot = new Robot();
-        boolean support = (code >= KeyEvent.VK_0 && code <= KeyEvent.VK_Z) || code == KeyEvent.VK_SPACE;
+        boolean support = (code >= KeyEvent.VK_0 && code <= KeyEvent.VK_Z)
+                || code == KeyEvent.VK_SPACE
+                || code == KeyEvent.VK_ENTER
+                || code == KeyEvent.VK_TAB
+                || code == KeyEvent.VK_BACK_SPACE;
         if(support) {
             robot.keyPress(code);
             robot.keyRelease(code);
@@ -54,12 +58,6 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-//        Properties properties = System.getProperties();
-//        Enumeration<?> names = properties.propertyNames();
-//        while (names.hasMoreElements()) {
-//            String e = (String) names.nextElement();
-//            System.out.println(e + " = " + properties.getProperty(e));
-//        }
 
         try {
             mouseClick(InputEvent.BUTTON3_MASK, 200, 200);

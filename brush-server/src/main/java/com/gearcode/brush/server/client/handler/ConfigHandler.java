@@ -29,8 +29,11 @@ public class ConfigHandler implements ClientMessageHandler {
 
         BrushClient client = server.findClient(ctx.channel().id().asShortText());
         if(client != null) {
-            client.setStandby(true);
             client.setClientConfig(config);
+
+            if(null != config.getPassword()) {
+                client.setStandby(true);
+            }
         }
     }
 }
