@@ -188,6 +188,6 @@ public class ClientLogicHandler extends SimpleChannelInboundHandler<String> {
 
         ByteBuf buffer = ctx.alloc().buffer(1 + configJSON.length());
         ctx.writeAndFlush(buffer.writeByte(Constants.ClientMessageType.CONFIG.value()).writeBytes(configJSON.getBytes(CharsetUtil.UTF_8)));
-        logger.info("Send message success!");
+        logger.info("Send client config: {}", configJSON);
     }
 }

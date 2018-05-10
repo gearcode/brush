@@ -1,6 +1,7 @@
 package com.gearcode.brush.client.test;
 
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -15,5 +16,12 @@ public class PrintAllVars {
             String e = (String) names.nextElement();
             System.out.println(e + " = " + properties.getProperty(e));
         }
+
+        System.out.println("============================================");
+
+        Map<String, String> map = System.getenv();
+        map.entrySet().forEach(e -> {
+            System.out.println(e.getKey() + " = " + e.getValue());
+        });
     }
 }

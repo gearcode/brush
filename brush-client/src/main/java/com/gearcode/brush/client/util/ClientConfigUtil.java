@@ -12,6 +12,9 @@ public class ClientConfigUtil {
     public static ClientConfig getCurrentClientConfig() {
         ClientConfig config = new ClientConfig();
 
+        // 设置Client名称
+        config.setName(System.getenv("USERNAME") + "(" + System.getenv("COMPUTERNAME") + ")");
+
         // 获取屏幕尺寸
         Dimension clientSize = Toolkit.getDefaultToolkit().getScreenSize();
         config.setWidth(clientSize.width);

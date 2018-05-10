@@ -9,7 +9,7 @@
   </view>
   <text class="user-motto">{{motto}}</text>
   <view class="clients">
-    <button wx:key="" wx:for="{{clientArr}}" type="default" data-client-id="{{item.id}}" data-client-width="{{item.clientConfig.width}}" data-client-height="{{item.clientConfig.height}}" bindtap="connectToClient">{{item.id+"-"+item.ip}}</button>
+    <button wx:key="" wx:for="{{clientArr}}" type="default" data-client-id="{{item.id}}" data-client-width="{{item.clientConfig.width}}" data-client-height="{{item.clientConfig.height}}" bindtap="connectToClient">{{item.clientConfig.name}}</button>
   </view>
   <modal hidden="{{connectDialogHidden}}" title="请输入密码" confirm-text="连接" cancel-text="取消" bindcancel="connectCancel" bindconfirm="connectConfirm">
     <input type="text" placeholder="请输入内容" password focus="{{connectPassFocus}}" bindinput="connectPassInput" value="{{connectPass}}"/>

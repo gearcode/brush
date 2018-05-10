@@ -10,12 +10,22 @@ import java.io.Serializable;
  * @date 2018/5/8
  */
 public class ClientConfig implements Serializable {
+    private String name;
     @JsonIgnore
     private transient String password;
     private Integer width;
     private Integer height;
 
     public ClientConfig() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ClientConfig setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public String getPassword() {
