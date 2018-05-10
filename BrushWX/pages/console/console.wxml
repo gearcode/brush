@@ -13,11 +13,13 @@
   <!-- <canvas canvas-id="focusCanvas" style='width: {{canvasWidth}}px; height: {{canvasHeight}}px; margin-top: 10px' bindtap='consoleClick'></canvas> -->
 
   <view class='buttons'>
-    <button bindtap="pullKeyboard">键盘</button>
-    <button bindtap="fpsShow">FPS</button>
-    <button bindtap="keyboardButton" data-code='8'>退格</button>
-    <button bindtap="keyboardButton" data-code='9'>TAB</button>
-    <button bindtap="keyboardButton" data-code='10'>回车</button>
+    <button bindtap="keyboardButton" data-code='8' size='mini'>退格</button>
+    <button bindtap="keyboardButton" data-code='9' size='mini'>TAB</button>
+    <button bindtap="keyboardButton" data-code='10' size='mini'>回车</button>
+  </view>
+  <view class='buttons'>
+    <button bindtap="pullKeyboard" size='mini'>键盘</button>
+    <button bindtap="fpsShow" size='mini'>FPS</button>
   </view>
   <input placeholder="" focus="{{inputFocus}}" bindinput="keyboardInput" />
 

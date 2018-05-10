@@ -128,6 +128,7 @@ Page({
     }
   },
   pull: function() {
+    clearTimeout(this.pullHandler);
     console.log("FETCH_SCREEN," + this.data.canvasWidth + "," + this.data.canvasHeight + "," + this.data.focusX + "," + this.data.focusY);
     this.socket.send({
       data: "FETCH_SCREEN," + this.data.canvasWidth + "," + this.data.canvasHeight + "," + this.data.focusX + "," + this.data.focusY
@@ -151,6 +152,7 @@ Page({
   },
 
   focusOn: function(e) {
+    console.log(e);
     var x = e.detail.x - e.currentTarget.offsetLeft, 
         y = e.detail.y - e.currentTarget.offsetTop,
         canvas_w = this.data.canvasWidth,
@@ -248,7 +250,6 @@ Page({
   },
 
   fpsShow: function (e) {
-    console.log(this.data);
     this.setData({
       fpsHidden: false,
       fpsFocus: true
@@ -264,6 +265,7 @@ Page({
       pullDelay: this.data.fpsDelay,
       fpsHidden: true
     });
+    this.pull();
   },
   fpsInput: function (e) {
     this.setData({
