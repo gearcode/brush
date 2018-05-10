@@ -4,18 +4,24 @@
 </view>
 
 <view wx:if="{{connected}}">
-  <image src='data:image/png;base64,{{thumbBase64}}' style='width: {{canvasWidth}}px; height: {{canvasHeight}}px;' bindtap='focusOn'>
+  <image src='data:image/png;base64,{{thumbBase64}}' style='width: {{canvasWidth}}px; height: {{canvasHeight}}px;' capture-catch:tap='focusOn'>
     <cover-view class="focusRect" style='left: {{focusRectX}}px; top: {{focusRectY}}px; width: {{focusRectWidth}}px; height: {{focusRectHeight}}px; border-width: {{focusRectBorder}}px'></cover-view>
   </image>
   <image src='data:image/png;base64,{{focusBase64}}' style='width: {{canvasWidth}}px; height: {{canvasHeight}}px; margin-top: 10px' bindtap='consoleClick' bindlongpress='consoleClick'></image>
 
   <!-- <canvas canvas-id="thumbCanvas" style='width: {{canvasWidth}}px; height: {{canvasHeight}}px;' bindtap='focusOn'></canvas> -->
   <!-- <canvas canvas-id="focusCanvas" style='width: {{canvasWidth}}px; height: {{canvasHeight}}px; margin-top: 10px' bindtap='consoleClick'></canvas> -->
+
   <view class='buttons'>
     <button bindtap="pullKeyboard">键盘</button>
+    <button bindtap="fpsShow">FPS</button>
     <button bindtap="keyboardButton" data-code='8'>退格</button>
     <button bindtap="keyboardButton" data-code='9'>TAB</button>
     <button bindtap="keyboardButton" data-code='10'>回车</button>
   </view>
   <input placeholder="" focus="{{inputFocus}}" bindinput="keyboardInput" />
+
+  <modal hidden="{{fpsHidden}}" title="设置刷新延迟" confirm-text="确定" cancel-text="取消" bindcancel="fpsCancel" bindconfirm="fpsConfirm">
+    每次拉取画面延迟毫秒：<input type="text" placeholder="" focus="{{fpsFocus}}" bindinput="fpsInput" value="{{fpsDelay}}"/>
+  </modal>
 </view>

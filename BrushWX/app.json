@@ -1,13 +1,12 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs",
     "pages/console/console"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
+    "navigationBarTitleText": "BrushViewer",
     "navigationBarTextStyle": "black",
     "backgroundColor": "#f0145a"
   }

@@ -21,7 +21,11 @@ Page({
     focusRectHeight: 0,
     focusRectBorder: 2,
     scale: 0,
-    inputFocus: false
+    inputFocus: false,
+    fpsHidden: true,
+    fpsFocus: false,
+    fpsDelay: 1000,
+    pullDelay: 1000
   },
 
   /**
@@ -86,7 +90,7 @@ Page({
 
       that.drawScreen(res.data);
       // 持续更新screen
-      that.pullHandler = setTimeout(function() { that.pull(); }, 1000);
+      that.pullHandler = setTimeout(function() { that.pull(); }, that.data.pullDelay);
     });
   },
 
@@ -241,5 +245,29 @@ Page({
       data: socketData
     });
     console.log("Input: ", socketData);
+  },
+
+  fpsShow: function (e) {
+    console.log(this.data);
+    this.setData({
+      fpsHidden: false,
+      fpsFocus: true
+    });
+  },
+  fpsCancel: function (e) {
+    this.setData({
+      fpsHidden: true
+    });
+  },
+  fpsConfirm: function (e) {
+    this.setData({
+      pullDelay: this.data.fpsDelay,
+      fpsHidden: true
+    });
+  },
+  fpsInput: function (e) {
+    this.setData({
+      fpsDelay: e.detail.value
+    });
   }
 })
