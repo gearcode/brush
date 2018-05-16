@@ -44,7 +44,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         // 初始化ServerSocket的Pipeline
         ch.pipeline()
         // Idle 60s trigger IdleStateEvent
-        .addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS))
+        .addLast(new IdleStateHandler(0, 0, 5, TimeUnit.SECONDS))
         // Encoder
         .addLast(new LengthFieldBasedFrameEncoder())
         .addLast(new StringEncoder(CharsetUtil.UTF_8))
@@ -53,16 +53,6 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         // Logic
         .addLast(new ServerLogicHandler(server));
 
-        // 加入客户端列表
-        BrushClient client = new BrushClient();
-        client.setIp(NetUtil.toAddressString(ch.remoteAddress().getAddress()));
-        client.setId(ch.id().asShortText());
-        client.setName(client.getIp() + "(" + client.getId() + ")");
-        client.setStandby(false);
-        client.setSocketChannel(ch);
-
-        // 加入到客户端列表中
-        server.getClientMap().put(ch.id().asShortText(), client);
 
     }
 }

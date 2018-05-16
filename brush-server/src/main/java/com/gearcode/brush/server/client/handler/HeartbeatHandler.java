@@ -1,9 +1,9 @@
 package com.gearcode.brush.server.client.handler;
 
 import com.gearcode.brush.server.client.BrushServer;
+import com.gearcode.brush.server.util.NetUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +17,6 @@ public class HeartbeatHandler implements ClientMessageHandler {
 
     @Override
     public void handle(BrushServer server, ChannelHandlerContext ctx, ByteBuf byteBuf) {
-        logger.info("HEARTBEAT from Client");
+        logger.info("HEARTBEAT from Client[{}]", NetUtils.toAddressString(ctx));
     }
 }

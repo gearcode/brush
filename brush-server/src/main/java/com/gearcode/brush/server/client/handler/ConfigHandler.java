@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.gearcode.brush.server.client.BrushServer;
 import com.gearcode.brush.server.client.bean.BrushClient;
 import com.gearcode.brush.server.client.bean.ClientConfig;
+import com.gearcode.brush.server.util.NetUtils;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class ConfigHandler implements ClientMessageHandler {
     public void handle(BrushServer server, ChannelHandlerContext ctx, ByteBuf byteBuf) {
 
         String configJSON = byteBuf.toString(CharsetUtil.UTF_8);
-        logger.info("Config from client: {}", configJSON);
+        logger.info("Config from client[{}]: {}", NetUtils.toAddressString(ctx), configJSON);
 
         ClientConfig config = JSON.parseObject(configJSON, ClientConfig.class);
 

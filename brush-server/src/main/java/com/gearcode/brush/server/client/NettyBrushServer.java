@@ -45,11 +45,11 @@ public class NettyBrushServer implements BrushServer {
         // ServerBootstrap
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap
-                .group(parentGroup, childGroup)
-                .channel(NioServerSocketChannel.class)
-                .localAddress(Port)
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ConnectionTimeoutMillis)
-                .childHandler(new ServerChannelInitializer(this));
+        .group(parentGroup, childGroup)
+        .channel(NioServerSocketChannel.class)
+        .localAddress(Port)
+        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ConnectionTimeoutMillis)
+        .childHandler(new ServerChannelInitializer(this));
 
         try {
             // 阻塞直到绑定操作完成

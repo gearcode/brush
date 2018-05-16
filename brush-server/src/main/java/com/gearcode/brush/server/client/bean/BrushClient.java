@@ -1,5 +1,6 @@
 package com.gearcode.brush.server.client.bean;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gearcode.brush.server.websocket.BrushConsole;
 import io.netty.channel.socket.SocketChannel;
@@ -36,6 +37,11 @@ public class BrushClient {
      */
     @JsonIgnore
     private volatile BrushConsole console;
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 
     public Boolean isStandby() {
         return standby;

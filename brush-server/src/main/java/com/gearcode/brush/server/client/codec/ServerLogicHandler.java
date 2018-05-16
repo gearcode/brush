@@ -1,16 +1,21 @@
 package com.gearcode.brush.server.client.codec;
 
+import com.alibaba.fastjson.JSON;
 import com.gearcode.brush.server.client.BrushServer;
+import com.gearcode.brush.server.client.bean.BrushClient;
 import com.gearcode.brush.server.client.handler.ClientMessageHandler;
 import com.gearcode.brush.server.client.handler.ConfigHandler;
 import com.gearcode.brush.server.client.handler.HeartbeatHandler;
 import com.gearcode.brush.server.client.handler.ScreenHandler;
 import com.gearcode.brush.server.util.Constants;
+import com.gearcode.brush.server.util.NetUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.CharsetUtil;
+import io.netty.util.NetUtil;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -108,10 +113,7 @@ public class ServerLogicHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if(cause instanceof IOException) {
-            // 客户端入站异常, 关闭连接
             logger.error(cause.getLocalizedMessage());
-            server.getClientMap().remove(ctx.channel().id().asShortText());
-            ctx.close();
         } else {
             logger.error(cause.getLocalizedMessage(), cause);
         }
@@ -122,14 +124,12 @@ public class ServerLogicHandler extends SimpleChannelInboundHandler<ByteBuf> {
         // Idle
         if(evt instanceof IdleStateEvent) {
             logger.info("Sending HEARTBEAT");
-            ctx.writeAndFlush(HEARTBEAT_SEQUENCE.duplicate()).addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if (!future.isSuccess()) {
-                        logger.error("Send HEARTBEAT error, close this channel.");
-                        server.getClientMap().remove(future.channel().id().asShortText());
-                        future.channel().close();
-                    }
+            ctx.writeAndFlush(HEARTBEAT_SEQUENCE.duplicate()).addListener((ChannelFutureListener) future -> {
+                logger.info("SEND HB FUTURE, {}", JSON.toJSONString(future, true));
+                if (!future.isSuccess()) {
+                    logger.error("Send HEARTBEAT error, close this channel.");
+                    server.getClientMap().remove(future.channel().id().asShortText());
+                    future.channel().close();
                 }
             });
             return;
@@ -140,8 +140,29 @@ public class ServerLogicHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-//                ctx.writeAndFlush("FETCH_SCREEN").sync();
-//                logger.info("Send message success!");
+
+        Channel channel = ctx.channel();
+
+        // 客户端
+        BrushClient client = new BrushClient();
+        client.setIp(NetUtils.toAddressString(ctx));
+        client.setId(channel.id().asShortText());
+        client.setName(client.getIp() + "(" + client.getId() + ")");
+        client.setStandby(false);
+        client.setSocketChannel((SocketChannel) channel);
+
+        // 加入到客户端列表中
+        server.getClientMap().put(channel.id().asShortText(), client);
+
+        logger.info("Add BrushClient: {}", client);
     }
 
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        // 从Map中移除client
+        String key = ctx.channel().id().asShortText();
+        BrushClient client = server.getClientMap().get(key);
+        server.getClientMap().remove(key);
+        logger.info("Remove BrushClient: {}", client);
+    }
 }
