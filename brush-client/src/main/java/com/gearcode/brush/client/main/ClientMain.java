@@ -35,6 +35,8 @@ public class ClientMain {
 
     static Channel channel;
 
+    static volatile boolean running = true;
+
     public static void main(String[] args) throws InterruptedException, IOException {
 
         // 初始化托盘图标
@@ -46,24 +48,36 @@ public class ClientMain {
             showPasswordDialog();
         }
 
+        // Shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("Shutdown hook");
+            running = false;
+            channel.eventLoop().shutdownGracefully();
+        }));
+
         while(true) {
             logger.info("Start connect to server...");
             connectToServer();
-            logger.info("Connection closed, reconnect 3 seconds later...");
-            Thread.sleep(RECONNECT_DELAY);
+            if(running) {
+                logger.info("Connection closed, reconnect 3 seconds later...");
+                Thread.sleep(RECONNECT_DELAY);
+            } else {
+                break;
+            }
         }
     }
 
     private static void connectToServer() {
 
-        // netty nio线程池hhh
+        // netty nio线程池
         NioEventLoopGroup group = new NioEventLoopGroup(1);
         try {
             Bootstrap b = new Bootstrap();
             b.group(group)
-                    .channel(NioSocketChannel.class)
-                    .remoteAddress(IP, PORT)
-                    .handler(new ClientChannelInitializer());
+            .channel(NioSocketChannel.class)
+            .remoteAddress(IP, PORT)
+            .handler(new ClientChannelInitializer());
+
             ChannelFuture f = b.connect();
             f.addListener((ChannelFutureListener) future -> {
                 if(future.isSuccess()) {
@@ -80,6 +94,7 @@ public class ClientMain {
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         } finally {
+            logger.info("Shutdown netty gracefully");
             group.shutdownGracefully();
         }
     }
