@@ -40,7 +40,7 @@ public class ScreenHandler implements ClientMessageHandler {
         if (console != null) {
             try {
                 console.getSession().sendMessage(new BinaryMessage(bytes));
-                logger.info("Send message from client[{}] to console[{}], message: IMG[{}]",
+                logger.info("Send screenshot from client[{}] to console[{}], message: IMG[{}]",
                         NetUtil.toAddressString(console.getSession().getRemoteAddress().getAddress()),
                         NetUtil.toAddressString(channel.remoteAddress().getAddress()),
                         bytes.length);

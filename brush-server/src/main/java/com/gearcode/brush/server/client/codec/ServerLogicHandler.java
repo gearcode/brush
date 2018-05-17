@@ -87,7 +87,7 @@ public class ServerLogicHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
         int readableBytes = msg.readableBytes();
-        logger.info("Receive message: {}", readableBytes);
+        logger.debug("Receive message: {}", readableBytes);
 
         // 消息体为空, 不进行任何处理
         if(readableBytes < 1) {
@@ -123,9 +123,8 @@ public class ServerLogicHandler extends SimpleChannelInboundHandler<ByteBuf> {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         // Idle
         if(evt instanceof IdleStateEvent) {
-            logger.info("Sending HEARTBEAT");
             ctx.writeAndFlush(HEARTBEAT_SEQUENCE.duplicate()).addListener((ChannelFutureListener) future -> {
-                logger.info("SEND HB FUTURE, {}", JSON.toJSONString(future, true));
+                logger.info("Send HEARTBEAT to [{}]", NetUtils.toAddressString(ctx));
                 if (!future.isSuccess()) {
                     logger.error("Send HEARTBEAT error, close this channel.");
                     server.getClientMap().remove(future.channel().id().asShortText());

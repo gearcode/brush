@@ -44,7 +44,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         // 初始化ServerSocket的Pipeline
         ch.pipeline()
         // Idle 60s trigger IdleStateEvent
-        .addLast(new IdleStateHandler(0, 0, 5, TimeUnit.SECONDS))
+        .addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS))
         // Encoder
         .addLast(new LengthFieldBasedFrameEncoder())
         .addLast(new StringEncoder(CharsetUtil.UTF_8))

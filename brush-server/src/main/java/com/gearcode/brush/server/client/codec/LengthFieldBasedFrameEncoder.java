@@ -19,7 +19,7 @@ public class LengthFieldBasedFrameEncoder extends MessageToByteEncoder<ByteBuf> 
 
     @Override
     protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
-        logger.info("Encode outbound message, length: {}", msg.readableBytes());
+        logger.debug("Encode outbound message, length: {}", msg.readableBytes());
         // 2 MAGIC / 4 LENGTH
         out.capacity(out.readableBytes() + 6);
         // MAGIC CODE
