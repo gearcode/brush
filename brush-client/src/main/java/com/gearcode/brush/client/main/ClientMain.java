@@ -4,6 +4,7 @@ import com.gearcode.brush.client.handler.ClientChannelInitializer;
 import com.gearcode.brush.client.util.ClientConfigUtil;
 import com.gearcode.brush.client.util.Constants;
 import com.gearcode.brush.client.util.PrefConfig;
+import com.gearcode.brush.client.util.ScreenLockSettingUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -18,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.net.URL;
 
@@ -138,6 +140,23 @@ public class ClientMain {
                 showPasswordDialog();
             });
 
+            CheckboxMenuItem disableScreenLockMenuItem = new CheckboxMenuItem("Disable ScreenLock");
+
+            disableScreenLockMenuItem.addItemListener(e -> {
+                logger.info("Disable ScreenLock, {}, {}", e.getStateChange(), e.getStateChange());
+                switch (e.getStateChange()) {
+                    case ItemEvent.SELECTED:
+                        ScreenLockSettingUtil.disable();
+                        break;
+                    case ItemEvent.DESELECTED:
+                        ScreenLockSettingUtil.enable();
+                        break;
+                    default:
+                        break;
+                }
+
+            });
+
             MenuItem exitMenuItem = new MenuItem("Exit");
             ActionListener exitListener = e -> {
                 logger.info("Tray exiting...");
@@ -147,6 +166,7 @@ public class ClientMain {
 
             PopupMenu popup = new PopupMenu();
             popup.add(setPassMenuItem);
+            popup.add(disableScreenLockMenuItem);
             popup.add(exitMenuItem);
 
             trayIcon = new TrayIcon(image, "BrushClient", popup);
