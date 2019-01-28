@@ -16,9 +16,22 @@ import java.util.Properties;
 public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
-    public static void mouseClick(int event, int x, int y) throws AWTException {
+    private static final int ADJUST_TIMES = 20;
+
+    public static void mouseMove(int x, int y) throws AWTException {
         Robot robot = new Robot();
-        robot.mouseMove(x, y);
+        for (int i = 0; i < ADJUST_TIMES; i++) {
+            robot.mouseMove(x, y);
+            if(MouseInfo.getPointerInfo().getLocation().getX() == x && MouseInfo.getPointerInfo().getLocation().getY() == y) {
+                break;
+            }
+        }
+
+    }
+
+    public static void mouseClick(int event, int x, int y) throws AWTException {
+        mouseMove(x, y);
+        Robot robot = new Robot();
         robot.mousePress(event);
         robot.mouseRelease(event);
     }
